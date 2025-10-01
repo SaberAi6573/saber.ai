@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Domain // Personal Showcase</title>
+    
+    <!-- Tailwind CSS for rapid layout and styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for a futuristic feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-glow: #00ddff;
+            --secondary-glow: #ff00c8;
+            --bg-color: #02041b;
+            --text-color: #e0e0e0;
+            --scanline-opacity: 0.1;
+            --glitch-speed: 0.5s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        /* The canvas will be our animated background */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Static image background, hidden by default */
+        #image-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Sits behind everything */
+            background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Old-school TV scanlines effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, var(--scanline-opacity)) 50%,
+                rgba(0, 0, 0, var(--scanline-opacity))
+            );
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+            animation: scanline-anim 10s linear infinite;
+        }
+
+        @keyframes scanline-anim {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+        
+        /* Main content card with neon border */
+        .cyber-card {
+            background: rgba(10, 25, 47, 0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary-glow);
+            box-shadow: 0 0 15px var(--primary-glow), 0 0 30px var(--primary-glow) inset, 0 0 50px var(--secondary-glow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        /* Main heading with a glitch effect */
+        .glitch-text {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px var(--primary-glow), 0 0 10px var(--secondary-glow);
+            position: relative;
+            animation: glitch-anim var(--glitch-speed) infinite alternate-reverse;
+        }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+        }
+        .glitch-text::before {
+            left: -2px;
+            text-shadow: -1px 0 var(--primary-glow);
+            animation: glitch-anim-2 1.5s infinite linear alternate-reverse;
+        }
+        .glitch-text::after {
+            left: 2px;
+            text-shadow: 1px 0 var(--secondary-glow);
+            animation: glitch-anim-3 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: skewX(0deg); }
+            10% { transform: skewX(5deg); }
+            50% { transform: skewX(-5deg); }
+            100% { transform: skewX(0deg); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(42px, 9999px, 44px, 0); }
+            50% { clip: rect(12px, 9999px, 60px, 0); }
+            100% { clip: rect(5px, 9999px, 85px, 0); }
+        }
+        @keyframes glitch-anim-3 {
+            0% { clip: rect(25px, 9999px, 90px, 0); }
+            50% { clip: rect(35px, 9999px, 20px, 0); }
+            100% { clip: rect(65px, 9999px, 100px, 0); }
+        }
+
+        /* Profile photo style */
+        .profile-photo {
+            border: 3px solid var(--primary-glow);
+            box-shadow: 0 0 10px var(--primary-glow), 0 0 20px var(--primary-glow) inset;
+        }
+
+        /* Social icons with hover effect */
+        .social-icon {
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px var(--secondary-glow);
+        }
+        .social-icon:hover {
+            color: var(--primary-glow);
+            transform: scale(1.2) rotate(5deg);
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* The action button */
+        .cyber-button {
+            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            border: 2px solid var(--secondary-glow);
+            box-shadow: 0 0 10px var(--secondary-glow) inset, 0 0 10px var(--secondary-glow);
+            text-shadow: 0 0 5px var(--secondary-glow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .cyber-button:hover {
+            background: rgba(255, 0, 200, 0.2);
+            box-shadow: 0 0 20px var(--secondary-glow) inset, 0 0 20px var(--secondary-glow);
+            color: #fff;
+        }
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
+            transition: left 0.5s;
+        }
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        /* Status bar elements */
+        .status-bar {
+            padding: 4px 12px;
+            background: rgba(0,0,0,0.2);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-shadow: 0 0 3px var(--primary-glow);
+            color: var(--primary-glow);
+        }
+        .top-bar { border-bottom: 1px solid var(--primary-glow); }
+        .bottom-bar { border-top: 1px solid var(--primary-glow); }
+        .blinking-cursor {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Styles for the contact modal */
+        .modal-content {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        #contact-modal.hidden .modal-content {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <!-- The animated background canvas -->
+    <canvas id="matrix-canvas"></canvas>
+    <div id="image-background"></div>
+    
+    <!-- The scanlines overlay effect -->
+    <div class="scanlines"></div>
+    
+    <!-- Main Content Card -->
+    <div id="cyber-card" class="cyber-card w-11/12 max-w-md rounded-lg text-center transform-gpu flex flex-col overflow-hidden">
+        
+        <!-- Top Status Bar -->
+        <div class="top-bar status-bar flex justify-between items-center">
+            <span>SYSTEM STATUS: <span class="text-green-400">ONLINE</span></span>
+            <span id="clock"></span>
+        </div>
+
+        <div class="p-6 md:p-8">
+            <!-- Profile Picture -->
+            <img src="https://placehold.co/150x150/02041b/00ddff?text=YOU" alt="Profile Photo" class="profile-photo w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full object-cover mb-4">
+            
+            <!-- Main Heading -->
+            <h1 id="main-heading" class="glitch-text text-3xl md:text-4xl font-bold uppercase mb-4" data-text="YOUR NAME HERE">
+                YOUR NAME HERE
+            </h1>
+
+            <!-- Subtitle Text -->
+            <p class="text-md md:text-lg mb-6 text-gray-300 tracking-widest">[ SYSTEM DESIGNATION: DEVELOPER ]</p>
+            
+            <!-- Social Media Links -->
+            <div class="flex justify-center space-x-6 mb-8 text-4xl">
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+            </div>
+            
+            <!-- Action Button -->
+            <button id="matrix-toggle-button" class="cyber-button py-2 px-6 rounded-md uppercase tracking-widest">
+                Enter Matrix
+            </button>
+        </div>
+        
+        <!-- Bottom Status Bar -->
+        <div class="bottom-bar status-bar flex justify-between items-center">
+            <span>C:/Portfolio> <span id="typewriter"></span><span class="blinking-cursor">_</span></span>
+            <span>V.2.0.2.5</span>
+        </div>
+    </div>
+
+    <!-- Contact Modal (currently unused by button) -->
+    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-[200] hidden">
+        <div class="cyber-card modal-content w-11/12 max-w-lg p-8 rounded-lg text-left relative">
+            <button id="close-modal" class="absolute top-2 right-4 text-3xl hover:text-red-500 transition-colors">&times;</button>
+            <h2 class="glitch-text text-3xl font-bold uppercase mb-6" data-text="CONTACT">CONTACT</h2>
+            <form>
+                <div class="mb-4">
+                    <label for="name" class="block mb-2 uppercase tracking-widest text-sm text-gray-400">Handle</label>
+                    <input type="text" id="name" name="name" class="w-full bg-transparent border-b-2 border-[var(--primary-glow)] focus:outline-none focus:border-[var(--secondary-glow)] p-2 transition-colors">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block mb-2 uppercase tracking-widest text-sm text-gray-400">Secure Channel (Email)</label>
+                    <input type="email" id="email" name="email" class="w-full bg-transparent border-b-2 border-[var(--primary-glow)] focus:outline-none focus:border-[var(--secondary-glow)] p-2 transition-colors">
+                </div>
+                <div class="mb-6">
+                    <label for="message" class="block mb-2 uppercase tracking-widest text-sm text-gray-400">Message</label>
+                    <textarea id="message" name="message" rows="4" class="w-full bg-transparent border-2 border-[var(--primary-glow)] focus:outline-none focus:border-[var(--secondary-glow)] p-2 rounded-md transition-colors"></textarea>
+                </div>
+                <button type="submit" class="cyber-button w-full py-2 px-6 rounded-md uppercase tracking-widest">
+                    Transmit Message
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Digital Rain Effect ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        const imageBackground = document.getElementById('image-background');
+
+        let width, height, drops;
+        let rainInterval; // To hold the interval ID to start/stop the animation
+        
+        function setupCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            // Increased density by reducing the divisor from 20 to 15
+            const columns = Math.floor(width / 15);
+            drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+        }
+
+        const binaryChars = '01';
+        let isRainActive = true; 
+
+        function drawRain() {
+            // Fading effect for the trails
+            ctx.fillStyle = 'rgba(2, 4, 27, 0.05)';
+            ctx.fillRect(0, 0, width, height);
+            
+            const color = '#00ddff'; // Changed to match the theme's primary glow color
+            
+            ctx.fillStyle = color;
+            ctx.font = '15px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = binaryChars.charAt(Math.floor(Math.random() * binaryChars.length));
+                // x, y coordinates for each character
+                ctx.fillText(text, i * 15, drops[i] * 15);
+                
+                // Reset drop to the top randomly to make the rain effect uneven
+                if (drops[i] * 15 > height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        function startRain() {
+            if (!rainInterval) {
+                rainInterval = setInterval(drawRain, 33);
+            }
+        }
+
+        function stopRain() {
+            clearInterval(rainInterval);
+            rainInterval = null;
+        }
+        
+        // Initial setup and animation loop
+        setupCanvas();
+        startRain();
+        window.addEventListener('resize', setupCanvas);
+
+        // --- Interactive Card Tilt Effect ---
+        const card = document.getElementById('cyber-card');
+        
+        document.addEventListener('mousemove', (e) => {
+            const cardRect = card.getBoundingClientRect();
+            const { clientX, clientY } = e;
+            const { left, top, width, height } = cardRect;
+
+            const centerX = left + width / 2;
+            const centerY = top + height / 2;
+
+            const rotateX = ((clientY - centerY) / height) * -10; // Max rotation
+            const rotateY = ((clientX - centerX) / width) * 10;   // Max rotation
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+             card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        });
+
+
+        // --- Typewriter Effect ---
+        const typewriterElement = document.getElementById('typewriter');
+        const textToType = 'Loading profile... Access granted.';
+        let typeIndex = 0;
+
+        function type() {
+            if (typeIndex < textToType.length) {
+                typewriterElement.textContent += textToType.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(type, 100);
+            }
+        }
+        
+        window.onload = () => {
+            type();
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+
+        // --- Real-time Clock ---
+        const clockElement = document.getElementById('clock');
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+            const dateString = now.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+            clockElement.textContent = `${dateString} // ${timeString}`;
+        }
+
+        // --- Background Effect Toggle ---
+        const matrixToggleButton = document.getElementById('matrix-toggle-button');
+        
+        matrixToggleButton.addEventListener('click', () => {
+            isRainActive = !isRainActive; // Toggle the state
+
+            if (isRainActive) {
+                // Resume the rain effect
+                startRain();
+                canvas.style.opacity = '0.6';
+                imageBackground.style.opacity = '0';
+                matrixToggleButton.textContent = 'Enter Matrix';
+            } else {
+                // Stop the rain and show the image
+                stopRain();
+                // Clear the canvas to prevent static characters from showing during fade
+                setTimeout(() => ctx.clearRect(0, 0, width, height), 50);
+                canvas.style.opacity = '0';
+                imageBackground.style.opacity = '1';
+                matrixToggleButton.textContent = 'Exit Matrix';
+            }
+        });
+
+        // --- Modal Logic (Currently Unused) ---
+        const modal = document.getElementById('contact-modal');
+        const closeModalButton = document.getElementById('close-modal');
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        closeModalButton.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+    </script>
+</body>
+</html>
+
+
