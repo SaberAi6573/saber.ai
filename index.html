@@ -42,7 +42,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.6;
+            opacity: 0; /* Start hidden */
             transition: opacity 0.5s ease-in-out;
         }
 
@@ -57,7 +57,7 @@
             background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            opacity: 0;
+            opacity: 1; /* Start visible */
             transition: opacity 0.5s ease-in-out;
         }
 
@@ -223,7 +223,6 @@
         input[type=range] {
             -webkit-appearance: none;
             background: transparent;
-            width: 80px;
         }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-runnable-track {
@@ -273,13 +272,13 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center h-screen">
+<body class="flex items-center justify-center h-screen p-2">
 
     <!-- Music Controls Container -->
     <div id="music-controls-container" class="fixed bottom-4 left-4 z-50">
         <div class="flex items-center space-x-2 md:space-x-3 p-2 rounded" style="background: rgba(10, 25, 47, 0.7); backdrop-filter: blur(5px); border: 1px solid var(--primary-glow); box-shadow: 0 0 10px var(--primary-glow);">
             <button id="play-pause-btn" class="text-lg hover:text-[var(--secondary-glow)] transition-colors"><i class="fas fa-play"></i></button>
-            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+            <input type="range" id="volume-slider" class="w-16 sm:w-20" min="0" max="1" step="0.01" value="0.5">
             <label for="music-upload" class="music-upload-label text-xs uppercase cursor-pointer">Load Track</label>
             <input type="file" id="music-upload" accept="audio/*" class="hidden">
         </div>
@@ -296,7 +295,7 @@
     <div class="scanlines"></div>
     
     <!-- Main Content Card -->
-    <div id="cyber-card" class="cyber-card w-11/12 max-w-md rounded-lg text-center transform-gpu flex flex-col overflow-hidden">
+    <div id="cyber-card" class="cyber-card w-full max-w-md rounded-lg text-center transform-gpu flex flex-col overflow-hidden">
         
         <!-- Top Status Bar -->
         <div class="top-bar status-bar flex justify-between items-center">
@@ -309,19 +308,19 @@
             <img src="https://placehold.co/150x150/02041b/00ddff?text=YOU" alt="Profile Photo" class="profile-photo w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full object-cover mb-4">
             
             <!-- Main Heading -->
-            <h1 id="main-heading" class="glitch-text text-3xl md:text-4xl font-bold uppercase mb-4" data-text="YOUR NAME HERE">
+            <h1 id="main-heading" class="glitch-text text-2xl sm:text-3xl md:text-4xl font-bold uppercase mb-4" data-text="YOUR NAME HERE">
                 YOUR NAME HERE
             </h1>
 
             <!-- Subtitle Text -->
-            <p class="text-md md:text-lg mb-6 text-gray-300 tracking-widest">[ SYSTEM DESIGNATION: DEVELOPER ]</p>
+            <p class="text-sm sm:text-base md:text-lg mb-6 text-gray-300 tracking-widest">[ SYSTEM DESIGNATION: DEVELOPER ]</p>
             
             <!-- Social Media Links -->
-            <div class="flex justify-center space-x-6 mb-8 text-4xl">
-                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+            <div class="flex justify-center space-x-4 sm:space-x-6 mb-8 text-3xl sm:text-4xl">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-discord"></i></a>
             </div>
             
             <!-- Action Button -->
@@ -332,8 +331,8 @@
         
         <!-- Bottom Status Bar -->
         <div class="bottom-bar status-bar flex justify-between items-center">
-            <span>C:/Portfolio> <span id="typewriter"></span><span class="blinking-cursor">_</span></span>
-            <span>V.2.0.2.5</span>
+            <span class="truncate">C:/Portfolio> <span id="typewriter"></span><span class="blinking-cursor">_</span></span>
+            <span class="hidden sm:inline">V.2.0.2.5</span>
         </div>
     </div>
 
@@ -375,7 +374,6 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             
-            // Increased density by reducing the divisor from 20 to 15
             const columns = Math.floor(width / 15);
             drops = [];
             for (let i = 0; i < columns; i++) {
@@ -384,24 +382,21 @@
         }
 
         const binaryChars = '01';
-        let isRainActive = true; 
+        let isRainActive = false; // Start with image background, so rain is not active
 
         function drawRain() {
-            // Fading effect for the trails
             ctx.fillStyle = 'rgba(2, 4, 27, 0.05)';
             ctx.fillRect(0, 0, width, height);
             
-            const color = '#00ddff'; // Changed to match the theme's primary glow color
+            const color = '#00ddff';
             
             ctx.fillStyle = color;
             ctx.font = '15px monospace';
             
             for (let i = 0; i < drops.length; i++) {
                 const text = binaryChars.charAt(Math.floor(Math.random() * binaryChars.length));
-                // x, y coordinates for each character
                 ctx.fillText(text, i * 15, drops[i] * 15);
                 
-                // Reset drop to the top randomly to make the rain effect uneven
                 if (drops[i] * 15 > height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
@@ -422,7 +417,7 @@
         
         // Initial setup and animation loop
         setupCanvas();
-        startRain();
+        // Don't start rain by default
         window.addEventListener('resize', setupCanvas);
 
         // --- Interactive Card Tilt Effect ---
@@ -436,8 +431,8 @@
             const centerX = left + width / 2;
             const centerY = top + height / 2;
 
-            const rotateX = ((clientY - centerY) / height) * -10; // Max rotation
-            const rotateY = ((clientX - centerX) / width) * 10;   // Max rotation
+            const rotateX = ((clientY - centerY) / height) * -10;
+            const rotateY = ((clientX - centerX) / width) * 10;
 
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
         });
@@ -471,7 +466,7 @@
         function updateClock() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', { hour12: false });
-            const dateString = now.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+            const dateString = now.toLocaleDateString('en-CA');
             clockElement.textContent = `${dateString} // ${timeString}`;
         }
 
@@ -482,19 +477,18 @@
             isRainActive = !isRainActive; // Toggle the state
 
             if (isRainActive) {
-                // Resume the rain effect
+                // This is now the "Enter Matrix" logic
                 startRain();
                 canvas.style.opacity = '0.6';
                 imageBackground.style.opacity = '0';
-                matrixToggleButton.textContent = 'Enter Matrix';
+                matrixToggleButton.textContent = 'Exit Matrix';
             } else {
-                // Stop the rain and show the image
+                // This is now the "Exit Matrix" logic
                 stopRain();
-                // Clear the canvas to prevent static characters from showing during fade
                 setTimeout(() => ctx.clearRect(0, 0, width, height), 50);
                 canvas.style.opacity = '0';
                 imageBackground.style.opacity = '1';
-                matrixToggleButton.textContent = 'Exit Matrix';
+                matrixToggleButton.textContent = 'Enter Matrix';
             }
         });
 
@@ -527,6 +521,7 @@
         playPauseBtn.addEventListener('click', togglePlayPause);
         audio.addEventListener('play', updatePlayPauseIcon);
         audio.addEventListener('pause', updatePlayPauseIcon);
+        audio.addEventListener('ended', updatePlayPauseIcon); // Handle when track finishes
 
         volumeSlider.addEventListener('input', (e) => {
             audio.volume = e.target.value;
