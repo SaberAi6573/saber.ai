@@ -35,8 +35,8 @@
         }
 
         /* Force hide the default cursor on interactive elements */
-        a, button, label {
-            cursor: none;
+        a, button, label, input[type="range"] {
+            cursor: none !important;
         }
 
         /* Re-enable text cursor only on text-based inputs */
@@ -242,6 +242,7 @@
             background: var(--primary-glow);
             border-radius: 5px;
             box-shadow: 0 0 5px var(--primary-glow);
+            cursor: none !important;
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -251,7 +252,7 @@
             background: var(--secondary-glow);
             margin-top: -6px;
             box-shadow: 0 0 10px var(--secondary-glow);
-            cursor: none;
+            cursor: none !important;
         }
          input[type=range]::-moz-range-track {
             width: 100%;
@@ -259,6 +260,7 @@
             background: var(--primary-glow);
             border-radius: 5px;
             box-shadow: 0 0 5px var(--primary-glow);
+            cursor: none !important;
         }
         input[type=range]::-moz-range-thumb {
             height: 16px;
@@ -267,7 +269,7 @@
             background: var(--secondary-glow);
             box-shadow: 0 0 10px var(--secondary-glow);
             border: none;
-            cursor: none;
+            cursor: none !important;
         }
 
 
@@ -658,6 +660,7 @@
     </script>
 </body>
 </html>
+
 
 
 
