@@ -31,8 +31,19 @@
             color: var(--text-color);
             font-family: 'Rajdhani', sans-serif;
             overflow: hidden;
-            cursor: crosshair;
+            cursor: none; /* Hide the default system cursor */
         }
+
+        /* Force hide the default cursor on interactive elements */
+        a, button, label {
+            cursor: none;
+        }
+
+        /* Re-enable text cursor only on text-based inputs */
+        input[type="text"], input[type="email"], textarea {
+            cursor: text;
+        }
+
 
         /* The canvas will be our animated background */
         #matrix-canvas {
@@ -228,7 +239,6 @@
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
             height: 4px;
-            cursor: pointer;
             background: var(--primary-glow);
             border-radius: 5px;
             box-shadow: 0 0 5px var(--primary-glow);
@@ -239,14 +249,13 @@
             width: 16px;
             border-radius: 50%;
             background: var(--secondary-glow);
-            cursor: pointer;
             margin-top: -6px;
             box-shadow: 0 0 10px var(--secondary-glow);
+            cursor: none;
         }
          input[type=range]::-moz-range-track {
             width: 100%;
             height: 4px;
-            cursor: pointer;
             background: var(--primary-glow);
             border-radius: 5px;
             box-shadow: 0 0 5px var(--primary-glow);
@@ -256,9 +265,9 @@
             width: 16px;
             border-radius: 50%;
             background: var(--secondary-glow);
-            cursor: pointer;
             box-shadow: 0 0 10px var(--secondary-glow);
             border: none;
+            cursor: none;
         }
 
 
@@ -270,73 +279,85 @@
             transform: scale(0.95);
             opacity: 0;
         }
+
+        /* --- New Nano Swarm Cursor Styles --- */
+        .nanite {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            pointer-events: none;
+            z-index: 10001;
+            border-radius: 50%;
+            background-color: var(--primary-glow);
+            box-shadow: 0 0 8px var(--primary-glow);
+            transition: transform 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+
+        .nanite.hover {
+            background-color: var(--secondary-glow);
+            box-shadow: 0 0 10px var(--secondary-glow);
+        }
+
+
+        /* --- Lightning Click Effect --- */
+        .click-lightning-bolt {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            height: 2px;
+            background-color: var(--primary-glow);
+            box-shadow: 0 0 5px var(--primary-glow);
+            transform-origin: left;
+            animation: bolt-fade 0.5s ease-out forwards;
+        }
+
+        @keyframes bolt-fade {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
     </style>
 </head>
 <body class="flex items-center justify-center h-screen p-2">
-
-    <!-- Music Controls Container -->
+    <!-- Main HTML content remains the same -->
     <div id="music-controls-container" class="fixed bottom-4 left-4 z-50">
         <div class="flex items-center space-x-2 md:space-x-3 p-2 rounded" style="background: rgba(10, 25, 47, 0.7); backdrop-filter: blur(5px); border: 1px solid var(--primary-glow); box-shadow: 0 0 10px var(--primary-glow);">
             <button id="play-pause-btn" class="text-lg hover:text-[var(--secondary-glow)] transition-colors"><i class="fas fa-play"></i></button>
             <input type="range" id="volume-slider" class="w-16 sm:w-20" min="0" max="1" step="0.01" value="0.5">
-            <label for="music-upload" class="music-upload-label text-xs uppercase cursor-pointer">Load Track</label>
+            <label for="music-upload" class="music-upload-label text-xs uppercase">Load Track</label>
             <input type="file" id="music-upload" accept="audio/*" class="hidden">
         </div>
     </div>
-
-    <!-- Audio player element -->
     <audio id="background-music" loop></audio>
-
-    <!-- The animated background canvas -->
     <canvas id="matrix-canvas"></canvas>
     <div id="image-background"></div>
-    
-    <!-- The scanlines overlay effect -->
     <div class="scanlines"></div>
-    
-    <!-- Main Content Card -->
     <div id="cyber-card" class="cyber-card w-full max-w-md rounded-lg text-center transform-gpu flex flex-col overflow-hidden">
-        
-        <!-- Top Status Bar -->
         <div class="top-bar status-bar flex justify-between items-center">
             <span>SYSTEM STATUS: <span class="text-green-400">ONLINE</span></span>
             <span id="clock"></span>
         </div>
-
         <div class="p-6 md:p-8">
-            <!-- Profile Picture -->
             <img src="https://ik.imagekit.io/Saber6573/cd1eacd5-4dc3-4ee3-8ded-60e9d0fb76df.jpeg?updatedAt=1759307918364" alt="Profile Photo" class="profile-photo w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full object-cover mb-4">
-            
-            <!-- Main Heading -->
             <h1 id="main-heading" class="glitch-text text-2xl sm:text-3xl md:text-4xl font-bold uppercase mb-4" data-text="WLCOME TO SABER's DOMAIN">
                 WLCOME TO SABER's DOMAIN
             </h1>
-
-            <!-- Subtitle Text -->
             <p class="text-sm sm:text-base md:text-lg mb-6 text-gray-300 tracking-widest">[ SYSTEM DESIGNATION: DEVELOPER ]</p>
-            
-            <!-- Social Media Links -->
             <div class="flex justify-center space-x-4 sm:space-x-6 mb-8 text-3xl sm:text-4xl">
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-github"></i></a>
                 <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-linkedin"></i></a>
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-twitter"></i></a>
                 <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="social-icon"><i class="fab fa-discord"></i></a>
             </div>
-            
-            <!-- Action Button -->
             <button id="matrix-toggle-button" class="cyber-button py-2 px-6 rounded-md uppercase tracking-widest">
                 Enter Matrix
             </button>
         </div>
-        
-        <!-- Bottom Status Bar -->
         <div class="bottom-bar status-bar flex justify-between items-center">
             <span class="truncate">C:/Portfolio> <span id="typewriter"></span><span class="blinking-cursor">_</span></span>
             <span class="hidden sm:inline">V.2.0.2.5</span>
         </div>
     </div>
-
-    <!-- Contact Modal (currently unused by button) -->
     <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-[200] hidden">
         <div class="cyber-card modal-content w-11/12 max-w-lg p-8 rounded-lg text-left relative">
             <button id="close-modal" class="absolute top-2 right-4 text-3xl hover:text-red-500 transition-colors">&times;</button>
@@ -366,87 +387,66 @@
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         const imageBackground = document.getElementById('image-background');
-
         let width, height, drops;
-        let rainInterval; // To hold the interval ID to start/stop the animation
-        
+        let rainInterval;
         function setupCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            
             const columns = Math.floor(width / 15);
             drops = [];
             for (let i = 0; i < columns; i++) {
                 drops[i] = 1;
             }
         }
-
         const binaryChars = '01';
-        let isRainActive = false; // Start with image background, so rain is not active
-
+        let isRainActive = false;
         function drawRain() {
             ctx.fillStyle = 'rgba(2, 4, 27, 0.05)';
             ctx.fillRect(0, 0, width, height);
-            
             const color = '#00ddff';
-            
             ctx.fillStyle = color;
             ctx.font = '15px monospace';
-            
             for (let i = 0; i < drops.length; i++) {
                 const text = binaryChars.charAt(Math.floor(Math.random() * binaryChars.length));
                 ctx.fillText(text, i * 15, drops[i] * 15);
-                
                 if (drops[i] * 15 > height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             }
         }
-
         function startRain() {
             if (!rainInterval) {
                 rainInterval = setInterval(drawRain, 33);
             }
         }
-
         function stopRain() {
             clearInterval(rainInterval);
             rainInterval = null;
         }
-        
-        // Initial setup and animation loop
         setupCanvas();
-        // Don't start rain by default
         window.addEventListener('resize', setupCanvas);
 
         // --- Interactive Card Tilt Effect ---
         const card = document.getElementById('cyber-card');
-        
         document.addEventListener('mousemove', (e) => {
             const cardRect = card.getBoundingClientRect();
             const { clientX, clientY } = e;
             const { left, top, width, height } = cardRect;
-
             const centerX = left + width / 2;
             const centerY = top + height / 2;
-
             const rotateX = ((clientY - centerY) / height) * -10;
             const rotateY = ((clientX - centerX) / width) * 10;
-
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
         });
-
         document.addEventListener('mouseleave', () => {
              card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
         });
-
 
         // --- Typewriter Effect ---
         const typewriterElement = document.getElementById('typewriter');
         const textToType = 'Loading profile... Access granted.';
         let typeIndex = 0;
-
         function type() {
             if (typeIndex < textToType.length) {
                 typewriterElement.textContent += textToType.charAt(typeIndex);
@@ -459,6 +459,8 @@
             type();
             updateClock();
             setInterval(updateClock, 1000);
+            initializeClickEffect();
+            initializeNanoSwarmCursor(); // Initialize the new swarm cursor
         };
 
         // --- Real-time Clock ---
@@ -472,18 +474,14 @@
 
         // --- Background Effect Toggle ---
         const matrixToggleButton = document.getElementById('matrix-toggle-button');
-        
         matrixToggleButton.addEventListener('click', () => {
-            isRainActive = !isRainActive; // Toggle the state
-
+            isRainActive = !isRainActive;
             if (isRainActive) {
-                // This is now the "Enter Matrix" logic
                 startRain();
                 canvas.style.opacity = '0.6';
                 imageBackground.style.opacity = '0';
                 matrixToggleButton.textContent = 'Exit Matrix';
             } else {
-                // This is now the "Exit Matrix" logic
                 stopRain();
                 setTimeout(() => ctx.clearRect(0, 0, width, height), 50);
                 canvas.style.opacity = '0';
@@ -498,7 +496,6 @@
         const volumeSlider = document.getElementById('volume-slider');
         const musicUpload = document.getElementById('music-upload');
         let hasInteracted = false;
-
         function togglePlayPause() {
             if (audio.paused) {
                 audio.play().catch(e => console.error("Audio play failed:", e));
@@ -506,7 +503,6 @@
                 audio.pause();
             }
         }
-
         function updatePlayPauseIcon() {
             const icon = playPauseBtn.querySelector('i');
             if (audio.paused) {
@@ -517,16 +513,13 @@
                 icon.classList.add('fa-pause');
             }
         }
-        
         playPauseBtn.addEventListener('click', togglePlayPause);
         audio.addEventListener('play', updatePlayPauseIcon);
         audio.addEventListener('pause', updatePlayPauseIcon);
-        audio.addEventListener('ended', updatePlayPauseIcon); // Handle when track finishes
-
+        audio.addEventListener('ended', updatePlayPauseIcon);
         volumeSlider.addEventListener('input', (e) => {
             audio.volume = e.target.value;
         });
-
         musicUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -535,8 +528,6 @@
                 audio.play().catch(e => console.error("Audio play failed after upload:", e));
             }
         });
-        
-        // Browser autoplay policy requires user interaction first.
         document.body.addEventListener('click', () => {
             if (!hasInteracted && audio.paused && audio.src) {
                 audio.play().catch(e => console.error("Initial audio play failed:", e));
@@ -544,24 +535,131 @@
             hasInteracted = true;
         }, { once: true });
 
-
         // --- Modal Logic (Currently Unused) ---
         const modal = document.getElementById('contact-modal');
         const closeModalButton = document.getElementById('close-modal');
-
         function closeModal() {
             modal.classList.add('hidden');
         }
-
         closeModalButton.addEventListener('click', closeModal);
-
         modal.addEventListener('click', (event) => {
             if (event.target === modal) {
                 closeModal();
             }
         });
 
+        // --- New Nano Swarm Cursor Logic ---
+        function initializeNanoSwarmCursor() {
+            const naniteCount = 20;
+            const nanites = [];
+            let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            let isHovering = false;
+
+            for (let i = 0; i < naniteCount; i++) {
+                const nanite = document.createElement('div');
+                nanite.className = 'nanite';
+                document.body.appendChild(nanite);
+                nanites.push({
+                    el: nanite,
+                    x: mouse.x,
+                    y: mouse.y,
+                    ease: 0.05 + Math.random() * 0.06 // Randomize speed
+                });
+            }
+
+            window.addEventListener('mousemove', e => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            const interactiveElements = document.querySelectorAll('a, button, label, input[type="range"]');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => isHovering = true);
+                el.addEventListener('mouseleave', () => isHovering = false);
+            });
+            
+            function animate() {
+                nanites.forEach((nanite, index) => {
+                    let targetX = mouse.x;
+                    let targetY = mouse.y;
+
+                    // If not the leader, follow the previous nanite for a trailing effect
+                    if (index > 0) {
+                        const prevNanite = nanites[index - 1];
+                        targetX = prevNanite.x;
+                        targetY = prevNanite.y;
+                    }
+
+                    // On hover, swarm tightly around the mouse
+                    if (isHovering) {
+                        targetX = mouse.x;
+                        targetY = mouse.y;
+                        nanite.el.classList.add('hover');
+                    } else {
+                        nanite.el.classList.remove('hover');
+                    }
+                    
+                    // Ease toward the target
+                    nanite.x += (targetX - nanite.x) * nanite.ease;
+                    nanite.y += (targetY - nanite.y) * nanite.ease;
+
+                    nanite.el.style.left = `${nanite.x}px`;
+                    nanite.el.style.top = `${nanite.y}px`;
+                });
+
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- Lightning Click Effect Logic ---
+        function initializeClickEffect() {
+            document.addEventListener('mousedown', e => {
+                if (e.button === 0) { // Only for left click
+                    createLightningBurst(e.clientX, e.clientY);
+                }
+            });
+        }
+        function createLightningBurst(x, y) {
+            const boltCount = Math.floor(Math.random() * 5) + 8; // 8 to 12 bolts
+            for (let i = 0; i < boltCount; i++) {
+                const mainAngle = (Math.PI * 2 / boltCount) * i;
+                createLightningBolt(x, y, mainAngle);
+            }
+        }
+        function createLightningBolt(startX, startY, mainAngle) {
+            let x = startX;
+            let y = startY;
+            let segments = Math.floor(Math.random() * 3) + 3; // 3 to 5 segments
+            const color = Math.random() > 0.5 ? 'var(--primary-glow)' : 'var(--secondary-glow)';
+            for (let i = 0; i < segments; i++) {
+                const bolt = document.createElement('div');
+                bolt.className = 'click-lightning-bolt';
+                const length = Math.random() * 15 + 10;
+                const angle = mainAngle + (Math.random() - 0.5) * (Math.PI / 4);
+                const endX = x + Math.cos(angle) * length;
+                const endY = y + Math.sin(angle) * length;
+                const dx = endX - x;
+                const dy = endY - y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const rotation = Math.atan2(dy, dx) * (180 / Math.PI);
+                bolt.style.width = `${dist}px`;
+                bolt.style.left = `${x}px`;
+                bolt.style.top = `${y}px`;
+                bolt.style.backgroundColor = color;
+                bolt.style.boxShadow = `0 0 5px ${color}`;
+                bolt.style.transform = `rotate(${rotation}deg)`;
+                document.body.appendChild(bolt);
+                bolt.addEventListener('animationend', () => bolt.remove());
+                x = endX;
+                y = endY;
+            }
+        }
     </script>
 </body>
 </html>
+
+
+
+
 
