@@ -267,32 +267,6 @@
             <span>V.2.0.2.5</span>
         </div>
     </div>
-
-    <!-- Contact Modal (currently unused by button) -->
-    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-[200] hidden">
-        <div class="cyber-card modal-content w-11/12 max-w-lg p-8 rounded-lg text-left relative">
-            <button id="close-modal" class="absolute top-2 right-4 text-3xl hover:text-red-500 transition-colors">&times;</button>
-            <h2 class="glitch-text text-3xl font-bold uppercase mb-6" data-text="CONTACT">CONTACT</h2>
-            <form>
-                <div class="mb-4">
-                    <label for="name" class="block mb-2 uppercase tracking-widest text-sm text-gray-400">Handle</label>
-                    <input type="text" id="name" name="name" class="w-full bg-transparent border-b-2 border-[var(--primary-glow)] focus:outline-none focus:border-[var(--secondary-glow)] p-2 transition-colors">
-                </div>
-                <div class="mb-4">
-                    <label for="email" class="block mb-2 uppercase tracking-widest text-sm text-gray-400">Secure Channel (Email)</label>
-                    <input type="email" id="email" name="email" class="w-full bg-transparent border-b-2 border-[var(--primary-glow)] focus:outline-none focus:border-[var(--secondary-glow)] p-2 transition-colors">
-                </div>
-                <div class="mb-6">
-                    <label for="message" class="block mb-2 uppercase tracking-widest text-sm text-gray-400">Message</label>
-                    <textarea id="message" name="message" rows="4" class="w-full bg-transparent border-2 border-[var(--primary-glow)] focus:outline-none focus:border-[var(--secondary-glow)] p-2 rounded-md transition-colors"></textarea>
-                </div>
-                <button type="submit" class="cyber-button w-full py-2 px-6 rounded-md uppercase tracking-widest">
-                    Transmit Message
-                </button>
-            </form>
-        </div>
-    </div>
-
     <script>
         // --- Digital Rain Effect ---
         const canvas = document.getElementById('matrix-canvas');
